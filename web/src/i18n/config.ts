@@ -3,7 +3,11 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
 import enCommon from "./locales/en/common.json";
+import enLogin from "./locales/en/login.json";
+import enLogs from "./locales/en/logs.json";
 import zhCommon from "./locales/zh/common.json";
+import zhLogin from "./locales/zh/login.json";
+import zhLogs from "./locales/zh/logs.json";
 
 export const SUPPORTED_LOCALES = ["zh", "en"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -15,8 +19,8 @@ export const FALLBACK_LOCALE: Locale = "zh";
 export const LOCALE_STORAGE_KEY = "chatgpt2api-locale";
 
 const resources = {
-  zh: { common: zhCommon },
-  en: { common: enCommon },
+  zh: { common: zhCommon, logs: zhLogs, login: zhLogin },
+  en: { common: enCommon, logs: enLogs, login: enLogin },
 };
 
 i18n
