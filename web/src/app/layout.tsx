@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { LocaleScript } from "@/components/locale-script";
 import { ThemeScript } from "@/components/theme-script";
 import { TopNav } from "@/components/top-nav";
 import { I18nProvider } from "@/i18n/provider";
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <ThemeScript />
+        <LocaleScript />
       </head>
       <body
         className="antialiased"
