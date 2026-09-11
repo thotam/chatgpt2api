@@ -9,6 +9,7 @@ import enImage from "./locales/en/image.json";
 import enImageManager from "./locales/en/image-manager.json";
 import enLogin from "./locales/en/login.json";
 import enLogs from "./locales/en/logs.json";
+import enSettings from "./locales/en/settings.json";
 import zhAccounts from "./locales/zh/accounts.json";
 import zhCommon from "./locales/zh/common.json";
 import zhDebug from "./locales/zh/debug.json";
@@ -16,6 +17,7 @@ import zhImage from "./locales/zh/image.json";
 import zhImageManager from "./locales/zh/image-manager.json";
 import zhLogin from "./locales/zh/login.json";
 import zhLogs from "./locales/zh/logs.json";
+import zhSettings from "./locales/zh/settings.json";
 
 export const SUPPORTED_LOCALES = ["zh", "en"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -27,8 +29,8 @@ export const FALLBACK_LOCALE: Locale = "zh";
 export const LOCALE_STORAGE_KEY = "chatgpt2api-locale";
 
 const resources = {
-  zh: { common: zhCommon, logs: zhLogs, login: zhLogin, "image-manager": zhImageManager, debug: zhDebug, image: zhImage, accounts: zhAccounts },
-  en: { common: enCommon, logs: enLogs, login: enLogin, "image-manager": enImageManager, debug: enDebug, image: enImage, accounts: enAccounts },
+  zh: { common: zhCommon, logs: zhLogs, login: zhLogin, "image-manager": zhImageManager, debug: zhDebug, image: zhImage, accounts: zhAccounts, settings: zhSettings },
+  en: { common: enCommon, logs: enLogs, login: enLogin, "image-manager": enImageManager, debug: enDebug, image: enImage, accounts: enAccounts, settings: enSettings },
 };
 
 i18n
