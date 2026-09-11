@@ -4,11 +4,13 @@ import { initReactI18next } from "react-i18next";
 
 import enCommon from "./locales/en/common.json";
 import enDebug from "./locales/en/debug.json";
+import enImage from "./locales/en/image.json";
 import enImageManager from "./locales/en/image-manager.json";
 import enLogin from "./locales/en/login.json";
 import enLogs from "./locales/en/logs.json";
 import zhCommon from "./locales/zh/common.json";
 import zhDebug from "./locales/zh/debug.json";
+import zhImage from "./locales/zh/image.json";
 import zhImageManager from "./locales/zh/image-manager.json";
 import zhLogin from "./locales/zh/login.json";
 import zhLogs from "./locales/zh/logs.json";
@@ -23,8 +25,8 @@ export const FALLBACK_LOCALE: Locale = "zh";
 export const LOCALE_STORAGE_KEY = "chatgpt2api-locale";
 
 const resources = {
-  zh: { common: zhCommon, logs: zhLogs, login: zhLogin, "image-manager": zhImageManager, debug: zhDebug },
-  en: { common: enCommon, logs: enLogs, login: enLogin, "image-manager": enImageManager, debug: enDebug },
+  zh: { common: zhCommon, logs: zhLogs, login: zhLogin, "image-manager": zhImageManager, debug: zhDebug, image: zhImage },
+  en: { common: enCommon, logs: enLogs, login: enLogin, "image-manager": enImageManager, debug: enDebug, image: enImage },
 };
 
 i18n
