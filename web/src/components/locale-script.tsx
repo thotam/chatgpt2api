@@ -3,7 +3,7 @@
 const localeScript = `
 (() => {
   try {
-    const supported = ["zh", "en"];
+    const supported = ["zh", "en", "vi"];
     const langTags = { zh: "zh-CN" };
     const stored = localStorage.getItem("chatgpt2api-locale");
     const navLangs = Array.isArray(navigator.languages) && navigator.languages.length

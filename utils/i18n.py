@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 
-SUPPORTED_LOCALES: tuple[str, ...] = ("zh", "en")
+SUPPORTED_LOCALES: tuple[str, ...] = ("zh", "en", "vi")
 FALLBACK_LOCALE = "zh"
 
 # Request-scoped locale, populated by the Accept-Language middleware in api/app.py.
@@ -117,6 +117,51 @@ MESSAGES: dict[str, dict[str, str]] = {
         "oauth.session_id_missing": "Neither session_id was provided nor does the callback URL carry state",
         "oauth.token_exchange_network_error": "Network error while exchanging the token: {exc}",
         "oauth.access_token_empty": "OpenAI returned an empty access_token",
+    },
+    "vi": {
+        "identity.admin_name": "Quản trị viên",
+        "auth.default_key_name_admin": "Khóa quản trị viên",
+        "auth.default_key_name_user": "Người dùng thường",
+        "auth.key_invalid": "Khóa không hợp lệ hoặc đã hết hạn, vui lòng đăng nhập lại",
+        "auth.admin_required": "Thao tác này cần quyền quản trị viên",
+        "auth.user_key_not_found": "Khóa người dùng này không tồn tại, có thể đã bị xóa",
+        "account.not_found": "Tài khoản không tồn tại",
+        "account.no_email_password": "Không có email hoặc mật khẩu",
+        "account.no_changes": "Chưa phát hiện thay đổi nào, vui lòng chỉnh sửa rồi lưu lại",
+        "account.export_incomplete": "Không có tài khoản đầy đủ để xuất, cần có đồng thời access_token, refresh_token và id_token",
+        "filter.sensitive_word": "Phát hiện từ nhạy cảm, yêu cầu bị từ chối",
+        "review.unavailable": "Dịch vụ kiểm duyệt AI tạm thời không khả dụng, vui lòng thử lại sau",
+        "review.rejected": "Kiểm duyệt AI không đạt, yêu cầu bị từ chối",
+        "config.webdav_url_required": "Cần nhập WebDAV URL khi đã bật lưu trữ ảnh qua WebDAV",
+        "config.webdav_password_required": "Cần nhập mật khẩu WebDAV khi đã bật lưu trữ ảnh qua WebDAV",
+        "auth.key_required": "Vui lòng nhập khóa riêng mới",
+        "auth.key_conflicts_with_admin": "Khóa này trùng với khóa quản trị viên, vui lòng chọn khóa khác",
+        "auth.key_already_exists": "Khóa riêng này đã tồn tại, vui lòng chọn khóa khác",
+        "auth.name_already_used": "Tên này đang được sử dụng, vui lòng chọn một tên khác dễ phân biệt hơn",
+        "backup.openssl_missing_encrypt": "Môi trường hiện tại thiếu openssl, không thể thực hiện sao lưu mã hóa",
+        "backup.openssl_missing_decrypt": "Môi trường hiện tại thiếu openssl, không thể giải mã nội dung sao lưu",
+        "backup.openssl_exec_failed_generic": "Thực thi openssl thất bại",
+        "backup.encrypt_failed": "Sao lưu mã hóa thất bại: {detail}",
+        "backup.decrypt_failed": "Giải mã bản sao lưu thất bại: {detail}",
+        "backup.config_incomplete": "Cấu hình R2 chưa đầy đủ: thiếu {missing}",
+        "backup.connect_failed": "Kết nối R2 thất bại: HTTP {status}",
+        "backup.upload_failed": "Tải lên bản sao lưu thất bại: HTTP {status}",
+        "backup.delete_failed": "Xóa bản sao lưu thất bại: HTTP {status}",
+        "backup.read_failed": "Đọc bản sao lưu thất bại: HTTP {status}",
+        "backup.list_failed": "Lấy danh sách bản sao lưu thất bại: HTTP {status}",
+        "backup.key_required": "Khóa đối tượng sao lưu không được để trống",
+        "backup.passphrase_missing_download": "Chưa cấu hình mật khẩu mã hóa, không thể tải xuống và giải mã bản sao lưu đã mã hóa",
+        "backup.already_running": "Đang có một tác vụ sao lưu khác chạy",
+        "backup.passphrase_missing_encrypt": "Đã bật mã hóa sao lưu nhưng chưa đặt mật khẩu mã hóa",
+        "backup.passphrase_missing_view": "Chưa cấu hình mật khẩu mã hóa, không thể xem bản sao lưu đã mã hóa",
+        "backup.archive_corrupted": "Phân tích gói sao lưu thất bại, bản sao lưu có thể đã bị hỏng",
+        "image.webdav_disabled": "Lưu trữ ảnh qua WebDAV chưa được bật",
+        "image.url_parse_failed": "Không thể phân giải URL hình ảnh",
+        "oauth.callback_url_parse_failed": "Không thể phân tích callback URL: {exc}",
+        "oauth.code_or_callback_missing": "Thiếu code hoặc callback URL",
+        "oauth.session_id_missing": "Không có session_id và callback URL cũng không mang theo state",
+        "oauth.token_exchange_network_error": "Lỗi mạng khi đổi token: {exc}",
+        "oauth.access_token_empty": "OpenAI trả về access_token rỗng",
     },
 }
 

@@ -23,10 +23,10 @@ class TestParseAcceptLanguage(unittest.TestCase):
         self.assertEqual(parse_accept_language("en"), "en")
 
     def test_region_subtag_is_stripped(self) -> None:
-        self.assertEqual(parse_accept_language("en-US"), "en")
+        self.assertEqual(parse_accept_language("vi-VN"), "vi")
 
     def test_quality_values_are_ordered(self) -> None:
-        self.assertEqual(parse_accept_language("fr;q=0.9,zh;q=0.8,en;q=1.0"), "en")
+        self.assertEqual(parse_accept_language("fr;q=0.9,en;q=0.8,vi;q=1.0"), "vi")
 
     def test_unsupported_falls_back(self) -> None:
         self.assertEqual(parse_accept_language("fr-FR"), FALLBACK_LOCALE)
@@ -54,10 +54,11 @@ class TestCatalog(unittest.TestCase):
 
 
 class TestCatalogCompleteness(unittest.TestCase):
-    def test_no_chinese_in_en(self) -> None:
+    def test_no_chinese_in_en_or_vi(self) -> None:
         cjk = re.compile(r"[一-鿿]")
-        for key, value in MESSAGES["en"].items():
-            self.assertIsNone(cjk.search(value), f"en.{key} still holds Chinese: {value}")
+        for locale in ("en", "vi"):
+            for key, value in MESSAGES[locale].items():
+                self.assertIsNone(cjk.search(value), f"{locale}.{key} still holds Chinese: {value}")
 
 
 class TestLocaleContextVar(unittest.TestCase):
@@ -65,10 +66,10 @@ class TestLocaleContextVar(unittest.TestCase):
         self.assertEqual(get_locale(), FALLBACK_LOCALE)
 
     def test_set_locale_is_visible_to_get_locale_and_t(self) -> None:
-        token = set_locale("en")
+        token = set_locale("vi")
         try:
-            self.assertEqual(get_locale(), "en")
-            self.assertEqual(t("auth.key_invalid"), MESSAGES["en"]["auth.key_invalid"])
+            self.assertEqual(get_locale(), "vi")
+            self.assertEqual(t("auth.key_invalid"), MESSAGES["vi"]["auth.key_invalid"])
         finally:
             reset_locale(token)
         self.assertEqual(get_locale(), FALLBACK_LOCALE)
@@ -114,8 +115,8 @@ class TestLocaleMiddleware(unittest.TestCase):
         self.client = TestClient(_locale_probe_app())
 
     def test_middleware_value_is_visible_to_t_in_an_async_endpoint(self) -> None:
-        response = self.client.get("/async-echo", headers={"Accept-Language": "en"})
-        self.assertEqual(response.json()["message"], MESSAGES["en"]["auth.key_invalid"])
+        response = self.client.get("/async-echo", headers={"Accept-Language": "vi"})
+        self.assertEqual(response.json()["message"], MESSAGES["vi"]["auth.key_invalid"])
 
     def test_middleware_value_is_visible_to_t_in_a_sync_endpoint(self) -> None:
         # Starlette runs a plain `def` endpoint in a worker thread; this confirms
@@ -126,21 +127,21 @@ class TestLocaleMiddleware(unittest.TestCase):
     def test_middleware_value_is_visible_through_explicit_threadpool_offload(self) -> None:
         # Mirrors services/content_filter.check_request, invoked via
         # `await run_in_threadpool(check_request, text)` from async handlers.
-        response = self.client.get("/threadpool-echo", headers={"Accept-Language": "en"})
-        self.assertEqual(response.json()["message"], MESSAGES["en"]["auth.key_invalid"])
+        response = self.client.get("/threadpool-echo", headers={"Accept-Language": "vi"})
+        self.assertEqual(response.json()["message"], MESSAGES["vi"]["auth.key_invalid"])
 
     def test_middleware_value_is_visible_throughout_a_streamed_response(self) -> None:
-        response = self.client.get("/stream-echo", headers={"Accept-Language": "en"})
-        expected = MESSAGES["en"]["auth.key_invalid"]
+        response = self.client.get("/stream-echo", headers={"Accept-Language": "vi"})
+        expected = MESSAGES["vi"]["auth.key_invalid"]
         self.assertEqual(response.text, f"{expected}\n" * 3)
 
     def test_locale_does_not_leak_between_requests(self) -> None:
-        first = self.client.get("/async-echo", headers={"Accept-Language": "en"})
+        first = self.client.get("/async-echo", headers={"Accept-Language": "vi"})
         second = self.client.get("/async-echo")
         third = self.client.get("/async-echo", headers={"Accept-Language": "en"})
         fourth = self.client.get("/async-echo")
 
-        self.assertEqual(first.json()["message"], MESSAGES["en"]["auth.key_invalid"])
+        self.assertEqual(first.json()["message"], MESSAGES["vi"]["auth.key_invalid"])
         self.assertEqual(second.json()["message"], MESSAGES[FALLBACK_LOCALE]["auth.key_invalid"])
         self.assertEqual(third.json()["message"], MESSAGES["en"]["auth.key_invalid"])
         self.assertEqual(fourth.json()["message"], MESSAGES[FALLBACK_LOCALE]["auth.key_invalid"])
@@ -208,6 +209,15 @@ class TestReloginProgressRendersPerReaderLocale(unittest.TestCase):
 
         self.render = _render_relogin_results
 
+    def test_renders_vi(self) -> None:
+        results = [{"token": "tok-1", "status": "跳过", "error": "account.not_found", "error_is_key": True}]
+        token = set_locale("vi")
+        try:
+            rendered = self.render(results)
+        finally:
+            reset_locale(token)
+        self.assertEqual(rendered[0]["error"], MESSAGES["vi"]["account.not_found"])
+
     def test_renders_en(self) -> None:
         results = [{"token": "tok-1", "status": "跳过", "error": "account.not_found", "error_is_key": True}]
         token = set_locale("en")
@@ -226,7 +236,7 @@ class TestReloginProgressRendersPerReaderLocale(unittest.TestCase):
         # Upstream failure codes (e.g. from a password re-login attempt) have no
         # catalog key and must reach the reader exactly as the writer saw them.
         results = [{"token": "tok-2", "status": "异常", "error": "invalid_password", "error_is_key": False}]
-        token = set_locale("en")
+        token = set_locale("vi")
         try:
             rendered = self.render(results)
         finally:
@@ -260,6 +270,10 @@ def _relogin_progress_probe_app() -> FastAPI:
 class TestReloginProgressEndpointRendersPerRequestLocale(unittest.TestCase):
     def setUp(self) -> None:
         self.client = TestClient(_relogin_progress_probe_app())
+
+    def test_vi_header(self) -> None:
+        response = self.client.get("/relogin-progress", headers={"Accept-Language": "vi"})
+        self.assertEqual(response.json()["results"][0]["error"], MESSAGES["vi"]["account.not_found"])
 
     def test_en_header(self) -> None:
         response = self.client.get("/relogin-progress", headers={"Accept-Language": "en"})
