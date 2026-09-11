@@ -1,3 +1,5 @@
+[中文](README.md) · [English](README.en.md)
+
 <h1 align="center">ChatGPT2API</h1>
 
 
